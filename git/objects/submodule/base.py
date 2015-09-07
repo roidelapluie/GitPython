@@ -580,7 +580,11 @@ class Submodule(util.IndexObject, Iterable, Traversable):
                 # We also handle the case that history has been rewritten, leaving no merge-base. In that case
                 # we behave conservatively, protecting possible changes the user had done
                 may_reset = True
-                if mrepo.head.commit.binsha != self.NULL_BIN_SHA:
+                try:
+                    head = mrepo.head.commit.binsha
+                except:
+                    head = None
+                if head and mrepo.head.commit.binsha != self.NULL_BIN_SHA:
                     base_commit = mrepo.merge_base(mrepo.head.commit, hexsha)
                     if len(base_commit) == 0 or base_commit[0].hexsha == hexsha:
                         if force:
