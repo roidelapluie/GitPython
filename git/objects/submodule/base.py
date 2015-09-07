@@ -570,7 +570,11 @@ class Submodule(util.IndexObject, Iterable, Traversable):
 
             # update the working tree
             # handles dry_run
-            if mrepo is not None and mrepo.head.commit.binsha != binsha:
+            try:
+                force_update = mrepo is not None and mrepo.head.commit.binsha != binsha
+            except ValueError:
+                force_update = True
+            if force_update:
                 # We must assure that our destination sha (the one to point to) is in the future of our current head.
                 # Otherwise, we will reset changes that might have been done on the submodule, but were not yet pushed
                 # We also handle the case that history has been rewritten, leaving no merge-base. In that case
